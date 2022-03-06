@@ -1,1 +1,1 @@
-# sheipting
+# shell scripting
