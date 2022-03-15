@@ -3,14 +3,12 @@
 LOG=/tmp/instance-create.log
 rm -f $LOG
 
-
-
-INSTANCE_NAME=$1
-
-if [ -z "${INSTANCE_NAME}" ]; then
-  echo -e "\e[1;33mInstance Name Argument is needed\e[om"
-  exit
-fi
+INSTANCE_CREATE() {
+  INSTANCE_NAME=$1
+  if [ -z "${INSTANCE_NAME}" ]; then
+    echo -e "\e[1;33mInstance Name Argument is needed\e[0m"
+    exit
+  fi
 
 AMI_ID=$( aws ec2 describe-images --filters "Name=name,Values=Centos-7-DevOps-Practice" --query 'Images[*].[ImageId]' --output text)
 
@@ -55,3 +53,19 @@ IPADDRESS=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${INSTANC
   ZONE_ID=$(aws route53 list-hosted-zones --query "HostedZones[*].{name:Name,ID:Id}" --output text | grep roboshop.internal  | awk '{print $1}' | awk -F / '{print $3}')
   aws route53 change-resource-record-sets --hosted-zone-id $ZONE_ID --change-batch file:///tmp/record.json --output text &>>$LOG
   echo -e "\e[1m DNS Record Created\e[0m"
+
+}
+
+### Main Program
+
+
+if [ "$1" == "list" ]; then
+  aws ec2 describe-instances  --query "Reservations[*].Instances[*].{PrivateIP:PrivateIpAddress,PublicIP:PublicIpAddress,Name:Tags[?Key=='Name']|[0].Value,Status:State.Name}"  --output table
+  exit
+elif [ "$1" == "all" ]; then
+  for component in cart catalogue dispatch frontend mongodb mysql payment rabbitmq redis shipping user ; do
+    INSTANCE_CREATE ${component}
+  done
+else
+  INSTANCE_CREATE $1
+fi
