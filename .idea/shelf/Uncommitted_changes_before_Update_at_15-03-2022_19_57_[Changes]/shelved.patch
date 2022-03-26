@@ -1,0 +1,13 @@
+Index: roboshop-project/components/users.sh
+===================================================================
+diff --git a/roboshop-project/components/users.sh b/roboshop-project/components/users.sh
+deleted file mode 100644
+--- a/roboshop-project/components/users.sh	(revision c6b2748fd5074c63fb05c6bab3936ba83ff4e66c)
++++ /dev/null	(revision c6b2748fd5074c63fb05c6bab3936ba83ff4e66c)
+@@ -1,5 +0,0 @@
+-#!/bin/bash
+-
+-source components/common.sh
+-
+-NODEJS user
+\ No newline at end of file
